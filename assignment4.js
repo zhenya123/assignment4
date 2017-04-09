@@ -13,5 +13,41 @@
 
 (function() {
   // Magic!
-  console.log('Keepin\'n it clean with an external script!');
+  var data = "data";
+  var interests = "interests";
+  var programming = "programming";
+  var items = {};
+  var output = [];
+
+  $.getJSON( 'http://www.mattbowytz.com/simple_api.json?data=all', function(response){
+    $.each( response, function( key, val ) {
+      items[key] = val;
+    });
+  });
+
+  $( "#search" ).keyup(function() {
+    var input = $(this).val().toLowerCase();
+    if(input.length == 0){
+      $("#match").slideUp();
+    }
+    else {
+      output = [];
+      $.each(items[data], function(key, val){
+        $.each(val, function(index, val2){
+          if(val2.slice(0, input.length).toLowerCase() == input) {
+            $("#match").slideDown();
+            var search = val2.split(' ').join('+');
+            output.push('<li><a target="_blank" href = "https://www.google.com/#q=' + search + '">' + val2 + '</li>');
+            console.log(output);
+            $("#match").html(output.join(""));
+          }
+        });
+      });
+      if(output.length == 0) {
+        console.log(output);
+        $("#match").slideUp();
+      }
+  }
+  });
+
 })();
